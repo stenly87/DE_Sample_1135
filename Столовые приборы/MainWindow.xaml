@@ -5,10 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Столовые_приборы"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <StackPanel>
-        <Button Content="1" TabIndex="0"/>
-        <Button Content="1" TabIndex="1"/>
-        <Button Content="1" TabIndex="2"/>
-    </StackPanel>
+        Title="Столовые приборы" MinHeight="450" MinWidth="800"
+        WindowStartupLocation="CenterScreen" Icon="/Images/logo.png"
+        >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel Visibility="{Binding LoggedIn}" HorizontalAlignment="Right" Orientation="Horizontal">
+            <Label Content="{Binding UserFIO}" />
+            <Button Content="Выход" Command="{Binding Logout}"/>
+        </StackPanel>
+        <Frame Grid.Row="1" Content="{Binding CurrentPage}" NavigationUIVisibility="Hidden"/>
+    </Grid>
 </Window>
