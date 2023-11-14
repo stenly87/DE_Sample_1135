@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Столовые_приборы.mvvm
 {
-    public class BaseMv : INotifyPropertyChanged
+    public class BaseVM : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 

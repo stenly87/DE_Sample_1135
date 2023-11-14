@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Столовые_приборы.DB;
+using Столовые_приборы.mvvm.vm;
 
 namespace Столовые_приборы
 {
@@ -28,6 +29,7 @@ namespace Столовые_приборы
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainVM();
             // этот код удаляем после выполнения
             /*var t = new (string, string)[]
             {
