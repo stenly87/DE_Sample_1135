@@ -39,6 +39,16 @@
             <Setter Property="FontFamily" Value="Comic Sans MS"/>
         </Style>
 
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="{StaticResource backgroundAdd}"/>
+            <Setter Property="Margin" Value="3"/>
+            <Setter Property="Padding" Value="3"/>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="FontFamily" Value="Comic Sans MS"/>
+        </Style>
+
         <Style TargetType="PasswordBox">
             <Setter Property="Background" Value="{StaticResource backgroundAdd}"/>
             <Setter Property="Margin" Value="3"/>

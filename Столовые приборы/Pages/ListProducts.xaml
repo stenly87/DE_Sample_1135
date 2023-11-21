@@ -4,11 +4,82 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Столовые_приборы.Pages"
+      xmlns:model="clr-namespace:Столовые_приборы.DB"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ListProducts">
-
+    <Page.Resources>
+        <DataTemplate DataType="{x:Type model:Product}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Border BorderBrush="Black" BorderThickness="0.5">
+                    <Image Source="{Binding ProductPhoto}"/>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="0.5" Grid.Column="1">
+                    <StackPanel>
+                        <Label Content="{Binding ProductArticleNumber}"/>
+                        <Label Content="{Binding ProductName}"/>
+                        <Label Content="{Binding ProductCategory.Title}"/>
+                        <Label Content="{Binding ProductManufacturer.Title}"/>
+                        <Label Content="{Binding ProductCost}"/>
+                        <Label Content="{Binding ProductDiscountAmount}"/>
+                        <Label Content="{Binding ProductDiscountAmountMax}"/>
+                        <Label Content="{Binding ProductUnit.Title}"/>
+                        <Label Content="{Binding ProductSupplier.Title}"/>
+                        <Label Content="{Binding ProductDescription}"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="0.5" Grid.Column="2">
+                    <StackPanel>
+                        <Label Content="Наличие на складе"/>
+                        <Label Content="{Binding ProductQuantityInStock}"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <Label Content="Поиск:"/>
+                <TextBox Text="{Binding SearchText, 
+                    UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <Label Content="Фильтрация по производителю:"/>
+                <ComboBox ItemsSource="{Binding Manufacturers}"
+                          SelectedItem="{Binding SelectedManufacturer}"
+                          DisplayMemberPath="Title"/>
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+                <Label Content="Сортировка по стоимости:"/>
+                <ComboBox ItemsSource="{Binding SortValues}"
+              SelectedItem="{Binding SelectedSortValue}"/>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Right" Visibility="{Binding AdminVisibility}" Orientation="Horizontal" Grid.Column="3">
+                <Button Content="Добавить" Command="{Binding CreateProduct}"/>
+                <Button Content="Редактировать" Command="{Binding EditProduct}"/>
+                <Button Content="Удалить" Command="{Binding DeleteProduct}"/>
+            </StackPanel>
+        </Grid>
+        <StackPanel Grid.Row="1">
+            <Label Content="{Binding SearchInfo}"/>
+        </StackPanel>
+        <ListBox Grid.Row="2" HorizontalContentAlignment="Stretch" ItemsSource="{Binding Products}" SelectedItem="{Binding SelectedProduct}" />
     </Grid>
 </Page>
