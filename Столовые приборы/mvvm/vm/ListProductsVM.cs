@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using Столовые_приборы.DB;
 
 namespace Столовые_приборы.mvvm.vm
@@ -76,41 +77,95 @@ namespace Столовые_приборы.mvvm.vm
         }
         public Product SelectedProduct { get; set; }
 
+        byte[] defaultImage;
+
         public ListProductsVM()
         {
+            LoadDefaultImage();
+
             AdminVisibility = Static.User.Logged.UserRole == 1 ? Visibility.Visible : Visibility.Collapsed;
 
             SortValues = new List<string>(new string[] { "По возрастанию", "По убыванию" });
+            try
+            {
+                Manufacturers = Static.DataBase.Instance().Manufacturers.ToList();
+                Manufacturers.Insert(0, new Manufacturer { Title = "Все производители" });
+                SelectedManufacturer = Manufacturers.First();
+            }
+            catch { }
 
-            Manufacturers = Static.DataBase.Instance().Manufacturers.ToList();
-            Manufacturers.Insert(0, new Manufacturer { Title = "Все производители" });
+            DeleteProduct = new VmCommand(() =>
+            {
+                if (SelectedProduct.OrderProducts.Count > 0)
+                {
+                    MessageBox.Show("Данный товар удалить нельзя. Он присутствует в заказах.");
+                }
+                else
+                {
+                    try
+                    {
+                        Static.DataBase.Instance().Products.Remove(SelectedProduct);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Произошла ошибка при удалении товара");
+                    }
+                    Search();
+                }
+            }, ()=> SelectedProduct != null);
+        }
+
+        private void LoadDefaultImage()
+        {
+            var stream = Application.GetResourceStream(new Uri("Images/picture.png", UriKind.Relative));
+            defaultImage = new byte[stream.Stream.Length];
+            stream.Stream.Read(defaultImage, 0, defaultImage.Length);
         }
 
         private void Search()
         {
-            var db = Static.DataBase.Instance();
+            try
+            {
+                var db = Static.DataBase.Instance();
+                int maxCountProducts = db.Products.Count();
 
-            var products = db.Products.
-                Include(s => s.ProductManufacturer).
-                Include(s => s.ProductCategory).
-                Include(s => s.ProductSupplier).
-                Include(s => s.ProductUnit);
-            IQueryable<Product> filterProduct;
-            if (SelectedManufacturer.ManufacturerId != 0)
-                filterProduct = products.Where(s => s.ProductManufacturerId == SelectedManufacturer.ManufacturerId);
-            else
-                filterProduct = products;
-            filterProduct = filterProduct.Where(s => s.ProductManufacturer.Title.Contains(searchText) ||
-                s.ProductSupplier.Title.Contains(searchText) ||
-                s.ProductArticleNumber.Contains(searchText) ||
-                s.ProductDescription.Contains(searchText) ||
-                s.ProductName.Contains(searchText)
-                );
-            if (SelectedSortValue == "По возрастанию")
-               Products = filterProduct.OrderBy(s => s.ProductCost).ToList();
-            else
-                Products = filterProduct.OrderByDescending(s => s.ProductCost).ToList();
+                var products = db.Products.
+                    Include(s => s.ProductManufacturer).
+                    Include(s => s.ProductCategory).
+                    Include(s => s.ProductSupplier).
+                    Include(s => s.ProductUnit).
+                    Include(s => s.OrderProducts);
+                IQueryable<Product> filterProduct;
+                if (SelectedManufacturer.ManufacturerId != 0)
+                    filterProduct = products.Where(s => s.ProductManufacturerId == SelectedManufacturer.ManufacturerId);
+                else
+                    filterProduct = products;
+                filterProduct = filterProduct.Where(s => s.ProductManufacturer.Title.Contains(searchText) ||
+                    s.ProductSupplier.Title.Contains(searchText) ||
+                    s.ProductArticleNumber.Contains(searchText) ||
+                    s.ProductDescription.Contains(searchText) ||
+                    s.ProductName.Contains(searchText)
+                    );
 
+                if (SelectedSortValue == "По возрастанию")
+                    Products = filterProduct.OrderBy(s => s.ProductCost).ToList();
+                else
+                    Products = filterProduct.OrderByDescending(s => s.ProductCost).ToList();
+                foreach (var item in Products)
+                {
+                    if (item.ProductPhoto == null)
+                        item.ProductPhoto = defaultImage;
+                }
+
+                if (Products.Count == 0)
+                    MessageBox.Show("По запросу ничего не найдено");
+
+                SearchInfo = $"Отображено записей: {Products.Count} из {maxCountProducts}";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

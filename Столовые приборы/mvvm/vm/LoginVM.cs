@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using Столовые_приборы.DB;
 using Столовые_приборы.Pages;
 using Столовые_приборы.Static;
 
@@ -53,34 +54,45 @@ namespace Столовые_приборы.mvvm.vm
             this.capchaField = capchaField;
 
             RunLogin = new VmCommand(() => {
-                var user = DataBase.Instance().Users.FirstOrDefault(s => s.UserLogin == Login &&
-                    s.UserPassword == passwordBox.Password);
-                bool success = user != null;
-                if (needCapcha && generateCapcha != CapchaText)
-                    success = false;
-
-                if (!success && needCapcha)
+                try
                 {
-                    GenerateCapcha();
-                    timer = new Timer(EnableInput, null, 0, 10000);
-                    MessageBox.Show("Неверный логин или пароль. Система заблокирована на 10 секунд.");
-                    return;
-                }
-                if (!success)
-                {
-                    MessageBox.Show("Неверный логин или пароль. Требуется подтверждение входа.");
-                    needCapcha = true;
-                    GenerateCapcha();
-                    CapchaVisibility = Visibility.Visible;
-                    return;
-                }
+                    var user = DataBase.Instance().Users.FirstOrDefault(s => s.UserLogin == Login &&
+                        s.UserPassword == passwordBox.Password);
+                    bool success = user != null;
+                    if (needCapcha && generateCapcha != CapchaText)
+                        success = false;
 
-                User.Logged = user;
-                PageNavigator.CurrentPage = new ListProducts();
+                    if (!success && needCapcha)
+                    {
+                        GenerateCapcha();
+                        timer = new Timer(EnableInput, null, 0, 10000);
+                        MessageBox.Show("Неверный логин или пароль. Система заблокирована на 10 секунд.");
+                        return;
+                    }
+                    if (!success)
+                    {
+                        MessageBox.Show("Неверный логин или пароль. Требуется подтверждение входа.");
+                        needCapcha = true;
+                        GenerateCapcha();
+                        CapchaVisibility = Visibility.Visible;
+                        return;
+                    }
+
+                    Static.User.Logged = user;
+                    PageNavigator.CurrentPage = new ListProducts();
+                }
+                catch (Exception ex) {
+                    MessageBox.Show("Произошла ошибка при авторизации. Не найден сервер бд.");
+                }
             }, 
             
             () => !string.IsNullOrEmpty(Login) && !string.IsNullOrEmpty(passwordBox.Password));
 
+            GuestLogin = new VmCommand(() =>
+            {
+                Static.User.Logged = new DB.User { UserId = -1, UserName = "Гость" };
+                PageNavigator.CurrentPage = new ListProducts();
+            }, () => true);
         }
 
         private void EnableInput(object? state)

@@ -5,32 +5,54 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Столовые_приборы.Pages"
       xmlns:model="clr-namespace:Столовые_приборы.DB"
+      xmlns:convert="clr-namespace:Столовые_приборы.mvvm.converter"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ListProducts">
     <Page.Resources>
+        <convert:StockToBackground x:Key="converter"/>
         <DataTemplate DataType="{x:Type model:Product}">
-            <Grid>
+            <Grid Background="{Binding ProductQuantityInStock, Converter={StaticResource converter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Border BorderBrush="Black" BorderThickness="0.5">
-                    <Image Source="{Binding ProductPhoto}"/>
+                    <Image MaxWidth="300" Source="{Binding ProductPhoto}"/>
                 </Border>
                 <Border BorderBrush="Black" BorderThickness="0.5" Grid.Column="1">
                     <StackPanel>
-                        <Label Content="{Binding ProductArticleNumber}"/>
-                        <Label Content="{Binding ProductName}"/>
-                        <Label Content="{Binding ProductCategory.Title}"/>
-                        <Label Content="{Binding ProductManufacturer.Title}"/>
-                        <Label Content="{Binding ProductCost}"/>
-                        <Label Content="{Binding ProductDiscountAmount}"/>
-                        <Label Content="{Binding ProductDiscountAmountMax}"/>
-                        <Label Content="{Binding ProductUnit.Title}"/>
-                        <Label Content="{Binding ProductSupplier.Title}"/>
-                        <Label Content="{Binding ProductDescription}"/>
+                        <TextBlock Style="{StaticResource textBlock}" 
+                                   Text="{Binding ProductArticleNumber,
+                                        StringFormat='Артикул: {0}'}"/>
+                        <TextBlock Style="{StaticResource textBlock}" 
+                                   Text="{Binding ProductName,
+                                        StringFormat='Название: {0}'}"/>
+                        <TextBlock Style="{StaticResource textBlock}" 
+                                    Text="{Binding ProductCategory.Title,
+                                        StringFormat='Категория: {0}'}"/>
+                        <TextBlock Style="{StaticResource textBlock}" 
+                                    Text="{Binding ProductManufacturer.Title,
+                                        StringFormat='Производитель: {0}'}"/>
+                        <TextBlock Style="{StaticResource textBlock}" 
+                                    Text="{Binding ProductCost,
+                                        StringFormat='Цена: {0}'}"/>
+                        <TextBlock Style="{StaticResource textBlock}" 
+                                    Text="{Binding ProductDiscountAmount,
+                                        StringFormat='Скидка: {0}'}"/>
+                        <TextBlock Style="{StaticResource textBlock}" 
+                                    Text="{Binding ProductDiscountAmountMax,
+                                        StringFormat='Скидка (макс): {0}'}"/>
+                        <TextBlock Style="{StaticResource textBlock}" 
+                                    Text="{Binding ProductUnit.Title,
+                                        StringFormat='Ед.изм.: {0}'}"/>
+                        <TextBlock Style="{StaticResource textBlock}" 
+                                    Text="{Binding ProductSupplier.Title,
+                                        StringFormat='Поставщик: {0}'}"/>
+                        <TextBlock Style="{StaticResource textBlock}" 
+                                    Text="{Binding ProductDescription,
+                                        StringFormat='Описание: {0}'}"/>
                     </StackPanel>
                 </Border>
                 <Border BorderBrush="Black" BorderThickness="0.5" Grid.Column="2">
