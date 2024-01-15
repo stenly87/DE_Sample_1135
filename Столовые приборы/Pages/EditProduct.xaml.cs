@@ -17,19 +17,14 @@ using Столовые_приборы.mvvm.vm;
 namespace Столовые_приборы.Pages
 {
     /// <summary>
-    /// Логика взаимодействия для ListProducts.xaml
+    /// Логика взаимодействия для EditProduct.xaml
     /// </summary>
-    public partial class ListProducts : Page
+    public partial class EditProduct : Page
     {
-        public ListProducts()
+        public EditProduct(DB.Product selectedProduct = null)
         {
             InitializeComponent();
-            DataContext = new ListProductsVM();
-        }
-
-        private void ListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            ((ListProductsVM)DataContext).DoubleClick();
+            DataContext = new EditProductVM(selectedProduct);
         }
     }
 }

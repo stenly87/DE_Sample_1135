@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Столовые_приборы.DB;
+using Столовые_приборы.Pages;
+using Столовые_приборы.Static;
 
 namespace Столовые_приборы.mvvm.vm
 {
@@ -94,6 +96,13 @@ namespace Столовые_приборы.mvvm.vm
             }
             catch { }
 
+            EditProduct = new VmCommand(() => {
+                PageNavigator.CurrentPage = new EditProduct(SelectedProduct);
+            }, () => SelectedProduct != null);
+            CreateProduct = new VmCommand(() => {
+                PageNavigator.CurrentPage = new EditProduct();
+            }, () => true);
+
             DeleteProduct = new VmCommand(() =>
             {
                 if (SelectedProduct.OrderProducts.Count > 0)
@@ -105,6 +114,8 @@ namespace Столовые_приборы.mvvm.vm
                     try
                     {
                         Static.DataBase.Instance().Products.Remove(SelectedProduct);
+                        Static.DataBase.Instance().SaveChanges();
+                        Search();
                     }
                     catch (Exception ex)
                     {
@@ -166,6 +177,11 @@ namespace Столовые_приборы.mvvm.vm
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        internal void DoubleClick()
+        {
+            EditProduct?.Execute(null);
         }
     }
 }

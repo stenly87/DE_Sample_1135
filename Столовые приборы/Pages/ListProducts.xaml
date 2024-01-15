@@ -102,6 +102,6 @@
         <StackPanel Grid.Row="1">
             <Label Content="{Binding SearchInfo}"/>
         </StackPanel>
-        <ListBox Grid.Row="2" HorizontalContentAlignment="Stretch" ItemsSource="{Binding Products}" SelectedItem="{Binding SelectedProduct}" />
+        <ListBox MouseDoubleClick="ListBox_MouseDoubleClick" Grid.Row="2" HorizontalContentAlignment="Stretch" ItemsSource="{Binding Products}" SelectedItem="{Binding SelectedProduct}" />
     </Grid>
 </Page>
